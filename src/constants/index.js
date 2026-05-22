@@ -1,6 +1,6 @@
 export const navLinks = [
   { id: 'hero', title: 'Home' },
-  { id: 'about', title: 'About' },
+  { id: 'about', title: 'About Me' },
   { id: 'projects', title: 'Projects' },
   { id: 'skills', title: 'Skills' },
   { id: 'contact', title: 'Contact' },
@@ -14,14 +14,16 @@ export const projects = [
     tags: ['React', 'Node.js', 'AI', 'Full Stack'],
     github: 'https://github.com/Athul-Titus/Talent-Search',
     featured: true,
+    color: '#E63946',
   },
   {
     title: 'QSafe (BB84 QKD)',
     description:
-      'End-to-end BB84 Quantum Key Distribution simulator with Recursive BB84, Cascade error reconciliation, and smart abort classification. Built with Qiskit, Flask, and React for secure P2P messaging using dynamically generated quantum keys.',
-    tags: ['Qiskit', 'Flask', 'React', 'Quantum Computing', 'Python'],
+      'End-to-end BB84 Quantum Key Distribution simulator with Recursive BB84, Cascade error reconciliation, and smart abort classification.',
+    tags: ['Qiskit', 'Flask', 'React', 'Quantum Computing'],
     github: 'https://github.com/Athul-Titus/bb84_new',
     featured: true,
+    color: '#6929C4',
   },
   {
     title: 'Fixmate Web',
@@ -30,6 +32,7 @@ export const projects = [
     tags: ['React', 'Web App', 'Service Platform'],
     github: 'https://github.com/Athul-Titus/Fixmate-Web',
     featured: true,
+    color: '#339933',
   },
   {
     title: 'Microplastic Detection',
@@ -38,6 +41,7 @@ export const projects = [
     tags: ['Python', 'Data Science', 'Research'],
     github: 'https://github.com/Athul-Titus/microplastic_project',
     featured: false,
+    color: '#3178C6',
   },
   {
     title: 'DBMS Project',
@@ -46,6 +50,7 @@ export const projects = [
     tags: ['SQL', 'DBMS', 'Backend'],
     github: 'https://github.com/Athul-Titus/DBMS_project',
     featured: false,
+    color: '#4169E1',
   },
   {
     title: 'Vajra 2.0',
@@ -54,29 +59,31 @@ export const projects = [
     tags: ['Full Stack', 'System Design'],
     github: 'https://github.com/Athul-Titus/Vajra2.0',
     featured: false,
+    color: '#E7352C',
   },
 ];
 
 export const skills = [
-  { name: 'React', color: '#61DAFB' },
-  { name: 'Python', color: '#3776AB' },
-  { name: 'Flask', color: '#FFFFFF' },
-  { name: 'Qiskit', color: '#6929C4' },
-  { name: 'TypeScript', color: '#3178C6' },
-  { name: 'JavaScript', color: '#F7DF1E' },
-  { name: 'Node.js', color: '#339933' },
-  { name: 'Three.js', color: '#FFFFFF' },
-  { name: 'Git', color: '#F05032' },
-  { name: 'Tailwind CSS', color: '#06B6D4' },
-  { name: 'PostgreSQL', color: '#4169E1' },
-  { name: 'ESP32', color: '#E7352C' },
+  { name: 'React', icon: '⚛️' },
+  { name: 'Python', icon: '🐍' },
+  { name: 'Flask', icon: '🌶️' },
+  { name: 'Qiskit', icon: '⚛️' },
+  { name: 'TypeScript', icon: '📘' },
+  { name: 'JavaScript', icon: '📜' },
+  { name: 'Node.js', icon: '🟢' },
+  { name: 'Three.js', icon: '🎮' },
+  { name: 'Git', icon: '📂' },
+  { name: 'Tailwind CSS', icon: '🎨' },
+  { name: 'PostgreSQL', icon: '🐘' },
+  { name: 'ESP32', icon: '🔧' },
 ];
 
-export const stats = [
-  { label: 'Projects Built', value: 6, suffix: '+' },
-  { label: 'IEEE Publication', value: 1, suffix: ' (In Progress)' },
-  { label: 'Team Members Led', value: 40, suffix: '+' },
-  { label: 'Years of Experience', value: 3, suffix: '' },
+export const education = [
+  {
+    school: 'APJ Abdul Kalam Technological University (KTU)',
+    period: '2022 - Present',
+    degree: 'B.Tech in Computer Science (Data Science)',
+  },
 ];
 
 export const socialLinks = [
