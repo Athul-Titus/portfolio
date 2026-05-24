@@ -158,34 +158,6 @@ export default function Hero() {
           <div ref={el => particlesRef.current[2] = el} className="absolute top-1/2 right-1/4 w-3 h-3 bg-[#E63946] rounded-full blur-[2px] animate-pulse-slow delay-300 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
           <div ref={el => particlesRef.current[3] = el} className="absolute bottom-1/4 right-1/3 w-1.5 h-1.5 bg-white rounded-full blur-[1px] animate-pulse-slow delay-200 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
           
-          {/* Floating Glass Cards */}
-          <div ref={el => cardsRef.current[0] = el} className="absolute top-10 right-10 z-20 parallax-card transition-transform duration-200 ease-out will-change-transform" data-depth="40">
-            <div className="transition-transform duration-300 group-hover:scale-105 rounded-xl">
-              <div className="animate-float glass-card p-4 rounded-xl border border-[#E63946]/30 shadow-[0_0_15px_rgba(230,57,70,0.15)] group-hover:shadow-[0_0_25px_rgba(230,57,70,0.3)] transition-shadow duration-300 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#E63946]/10 flex items-center justify-center text-[#E63946]">
-                  <span className="material-symbols-outlined">science</span>
-                </div>
-                <div>
-                  <div className="font-label-sm text-label-sm text-text-muted">Quantum</div>
-                  <div className="font-body-md text-body-md font-bold text-on-surface">Qiskit</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div ref={el => cardsRef.current[1] = el} className="absolute bottom-10 left-0 z-20 parallax-card transition-transform duration-200 ease-out will-change-transform" data-depth="-30">
-            <div className="transition-transform duration-300 group-hover:scale-105 rounded-xl">
-              <div className="animate-float-delayed glass-card p-4 rounded-xl border border-[#E63946]/30 shadow-[0_0_15px_rgba(230,57,70,0.15)] group-hover:shadow-[0_0_25px_rgba(230,57,70,0.3)] transition-shadow duration-300 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#E63946]/10 flex items-center justify-center text-[#E63946]">
-                  <span className="material-symbols-outlined">data_object</span>
-                </div>
-                <div>
-                  <div className="font-label-sm text-label-sm text-text-muted">React</div>
-                  <div className="font-body-md text-body-md font-bold text-on-surface">Three.js</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
