@@ -1,120 +1,201 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import RobotCanvas from './RobotCanvas';
-import { socialLinks } from '../constants';
-
-const name = 'ATHUL TITUS';
+import { useEffect, useRef } from 'react';
 
 export default function Hero() {
-  const [showContent, setShowContent] = useState(false);
-  const [showSubtitle, setShowSubtitle] = useState(false);
-  const [showButton, setShowButton] = useState(false);
+  const areaRef = useRef(null);
+  const avatarContainerRef = useRef(null);
+  const cardsRef = useRef([]);
+  const particlesRef = useRef([]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShowContent(true), 1600);
-    const t2 = setTimeout(() => setShowSubtitle(true), 2800);
-    const t3 = setTimeout(() => setShowButton(true), 3200);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const area = areaRef.current;
+    const avatarContainer = avatarContainerRef.current;
+    const cards = cardsRef.current;
+    const particles = particlesRef.current;
+
+    if (!area) return;
+
+    const handleMouseMove = (e) => {
+      const rect = area.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      // Normalized coordinates (-1 to 1)
+      const x = (mouseX - centerX) / (rect.width / 2);
+      const y = (mouseY - centerY) / (rect.height / 2);
+
+      // 1. Enhanced Parallax & Tilt for Avatar
+      if (avatarContainer) {
+          const tiltX = -y * 20; // Max 20deg tilt
+          const tiltY = x * 20;
+          const transX = x * 30; // Max 30px translation
+          const transY = y * 30;
+          avatarContainer.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate3d(${transX}px, ${transY}px, 0)`;
+      }
+
+      // 2. High-performance Parallax for Cards
+      cards.forEach(card => {
+          if (!card) return;
+          const depth = parseFloat(card.getAttribute('data-depth')) || 20;
+          card.style.transform = `translate3d(${x * depth}px, ${y * depth}px, 0)`;
+      });
+
+      // 3. Interactive Particles (Repulsion)
+      particles.forEach(particle => {
+          if (!particle) return;
+          const pRect = particle.getBoundingClientRect();
+          const pCenterX = pRect.left + pRect.width / 2;
+          const pCenterY = pRect.top + pRect.height / 2;
+          
+          const dx = mouseX - pCenterX;
+          const dy = mouseY - pCenterY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          
+          const repelRadius = 150;
+          if (dist < repelRadius) {
+              const force = (repelRadius - dist) / repelRadius;
+              const moveX = - (dx / dist) * force * 40; // Push away
+              const moveY = - (dy / dist) * force * 40;
+              particle.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+          } else {
+              particle.style.transform = `translate3d(0, 0, 0)`;
+          }
+      });
+    };
+
+    const handleMouseLeave = () => {
+      if (avatarContainer) {
+          avatarContainer.style.transform = `rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)`;
+      }
+      cards.forEach(card => {
+          if (card) card.style.transform = `translate3d(0, 0, 0)`;
+      });
+      particles.forEach(particle => {
+          if (particle) particle.style.transform = `translate3d(0, 0, 0)`;
+      });
+    };
+
+    area.addEventListener('mousemove', handleMouseMove);
+    area.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      area.removeEventListener('mousemove', handleMouseMove);
+      area.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col justify-center items-center pt-16 px-4 overflow-hidden">
-      {/* 3D Background */}
-      <div className="absolute inset-0 z-0 opacity-50">
-        <RobotCanvas />
-      </div>
-
-      {/* Radial glow overlay */}
-      <div
-        className="absolute inset-0 z-[1] pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(230,57,70,0.06) 0%, transparent 60%)',
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 w-full flex justify-center items-center">
-        <div className="w-full max-w-4xl text-center px-4 md:px-8">
-          {/* Big name */}
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-white tracking-[0.08em] intro-letter-glow leading-none">
-            {name.split('').map((char, i) => (
-              <span
-                key={i}
-                className="inline-block intro-letter"
-                style={{
-                  animationDelay: `${1.8 + i * 0.12}s`,
-                  marginRight: char === ' ' ? '0.3em' : '0.02em',
-                }}
-              >
-                {char === ' ' ? '\u00A0' : char}
-              </span>
-            ))}
-          </h1>
-
-          {/* Subtitle */}
-          <motion.p
-            className="text-primary/70 text-sm md:text-base tracking-[0.25em] uppercase font-heading mt-6"
-            initial={{ opacity: 0, y: 16 }}
-            animate={showSubtitle ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7 }}
-          >
-            Full Stack Developer • Quantum Systems • AI Tools
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            className="flex gap-4 justify-center mt-8"
-            initial={{ opacity: 0, y: 16 }}
-            animate={showButton ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7 }}
-          >
-            <button
+    <main id="hero" className="flex-grow relative flex items-center pt-24 pb-section-gap overflow-hidden min-h-screen">
+      {/* Background Halo */}
+      <div className="absolute inset-0 halo-bg pointer-events-none z-0"></div>
+      
+      <div className="w-full max-w-container-max mx-auto px-gutter relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        {/* Left Column: Content */}
+        <div className="flex flex-col items-start gap-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-container/20 border border-primary-container/30 animate-entrance">
+            <span className="w-2 h-2 rounded-full bg-[#E63946] animate-pulse"></span>
+            <span className="font-label-sm text-label-sm text-[#E63946] uppercase tracking-widest">Full Stack Developer</span>
+          </div>
+          
+          <div className="space-y-4 animate-entrance delay-100">
+            <h1 className="font-headline-xl text-headline-lg-mobile md:text-headline-xl font-bold text-on-surface">
+                Hi, I'm <br/><span className="text-[#E63946]">Athul Titus</span>
+            </h1>
+            <p className="font-body-lg text-body-lg text-text-muted max-w-lg">
+                I build quantum systems, AI-powered tools, and immersive web experiences.
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap gap-4 animate-entrance delay-200">
+            <button 
               onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-              className="group relative overflow-hidden border border-primary text-primary hover:bg-primary transition-all duration-300 font-heading tracking-wide whitespace-nowrap inline-flex items-center justify-center w-[180px] h-[42px] text-sm"
-            >
-              <span className="transform transition-all duration-300 group-hover:opacity-0 group-hover:-translate-y-4">
+              className="bg-[#E63946] text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 red-glow red-glow-hover transition-all duration-300 hover:scale-95">
                 View Projects
-              </span>
-              <span className="absolute transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-hover:text-white transition-all duration-300 text-lg">
-                →
-              </span>
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
-            <button
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="btn-outline text-sm h-[42px] px-6"
-            >
-              Get In Touch
+            <button 
+              onClick={() => window.open('https://github.com', '_blank')}
+              className="bg-transparent border border-border-subtle hover:border-[#E63946]/50 text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 transition-all duration-300 hover:bg-white/5 hover:scale-95 glass-card">
+                <span className="material-symbols-outlined text-[18px]">code</span>
+                GitHub
             </button>
-          </motion.div>
+          </div>
+          
+          {/* Stat Pills */}
+          <div className="flex flex-wrap gap-4 pt-4 animate-entrance delay-300">
+            <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
+              <span className="font-label-sm text-label-sm text-on-surface">6+ Projects</span>
+            </div>
+            <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
+              <span className="font-label-sm text-label-sm text-on-surface">IEEE Member</span>
+            </div>
+            <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
+              <span className="font-label-sm text-label-sm text-on-surface">KTU University</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: 3D Visual Area */}
+        <div ref={areaRef} id="avatar-area" className="relative h-[500px] hidden lg:flex items-center justify-center group perspective-[1000px]">
+          {/* Abstract Halo/Ring */}
+          <div className="absolute w-96 h-96 rounded-full border border-[#E63946]/30 shadow-[0_0_50px_rgba(230,57,70,0.1)] group-hover:shadow-[0_0_80px_rgba(230,57,70,0.3)] transition-shadow duration-500 transform rotate-12 scale-y-50 scale-x-110 animate-[spin_20s_linear_infinite] z-0"></div>
+          <div className="absolute w-80 h-80 rounded-full border border-[#E63946]/20 transform -rotate-12 scale-y-50 scale-x-110 animate-[spin_25s_linear_infinite_reverse] z-0"></div>
+          
+          {/* Central 3D Avatar */}
+          <div ref={avatarContainerRef} id="main-avatar-container" className="relative z-10 avatar-glow transition-all duration-500 animate-float will-change-transform flex items-center justify-center">
+            <img 
+              alt="Athul Titus 3D Avatar" 
+              className="w-[350px] md:w-[450px] h-auto object-contain mix-blend-lighten" 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMtIlDYNoNsG_Vskvdi1MyCOXY44E7El4AZx5iGmWpGP8-iMOTAul7LK6G1PkqCc2BTBXV2iL9lYLel6bQAjbIU8g0YYZUaE-tk7OJVlUHFh8SWU3VN46KeiLieEb6BZw3pmixI3iEvfEVj4mnaZyv5ji5P7rL6yoDWAcpVCdCbUjm_wYEMUVWcjFBQW1SEL0c0UicDkxWbS3pYECez7W9mMu0_RDLHKNoicqBWM10CPws115v7dUbEbWw6lArD-TvVnMr_b95gDs"
+            />
+          </div>
+
+          {/* Floating Particles */}
+          <div ref={el => particlesRef.current[0] = el} className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          <div ref={el => particlesRef.current[1] = el} className="absolute top-3/4 left-1/3 w-1 h-1 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow delay-100 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          <div ref={el => particlesRef.current[2] = el} className="absolute top-1/2 right-1/4 w-3 h-3 bg-[#E63946] rounded-full blur-[2px] animate-pulse-slow delay-300 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          <div ref={el => particlesRef.current[3] = el} className="absolute bottom-1/4 right-1/3 w-1.5 h-1.5 bg-white rounded-full blur-[1px] animate-pulse-slow delay-200 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          
+          {/* Floating Glass Cards */}
+          <div ref={el => cardsRef.current[0] = el} className="absolute top-10 right-10 z-20 parallax-card transition-transform duration-200 ease-out will-change-transform" data-depth="40">
+            <div className="transition-transform duration-300 group-hover:scale-105 rounded-xl">
+              <div className="animate-float glass-card p-4 rounded-xl border border-[#E63946]/30 shadow-[0_0_15px_rgba(230,57,70,0.15)] group-hover:shadow-[0_0_25px_rgba(230,57,70,0.3)] transition-shadow duration-300 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#E63946]/10 flex items-center justify-center text-[#E63946]">
+                  <span className="material-symbols-outlined">science</span>
+                </div>
+                <div>
+                  <div className="font-label-sm text-label-sm text-text-muted">Quantum</div>
+                  <div className="font-body-md text-body-md font-bold text-on-surface">Qiskit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div ref={el => cardsRef.current[1] = el} className="absolute bottom-10 left-0 z-20 parallax-card transition-transform duration-200 ease-out will-change-transform" data-depth="-30">
+            <div className="transition-transform duration-300 group-hover:scale-105 rounded-xl">
+              <div className="animate-float-delayed glass-card p-4 rounded-xl border border-[#E63946]/30 shadow-[0_0_15px_rgba(230,57,70,0.15)] group-hover:shadow-[0_0_25px_rgba(230,57,70,0.3)] transition-shadow duration-300 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#E63946]/10 flex items-center justify-center text-[#E63946]">
+                  <span className="material-symbols-outlined">data_object</span>
+                </div>
+                <div>
+                  <div className="font-label-sm text-label-sm text-text-muted">React</div>
+                  <div className="font-body-md text-body-md font-bold text-on-surface">Three.js</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Mobile social links */}
-      <div className="flex md:hidden justify-center gap-6 mt-8 z-10">
-        {socialLinks.map((link, i) => (
-          <a
-            key={i}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-primary transition-colors"
-            aria-label={link.name}
-          >
-            <span className="text-xl">
-              {link.icon === 'github' ? '⌂' : link.icon === 'linkedin' ? 'in' : '✉'}
-            </span>
-          </a>
-        ))}
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
+        <span className="font-label-sm text-label-sm text-text-muted tracking-widest uppercase">Scroll</span>
+        <div className="w-6 h-10 rounded-full border border-border-subtle flex justify-center p-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#E63946] animate-bounce-scroll"></div>
+        </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-      >
-        <div className="w-[1px] h-12 bg-gradient-to-b from-primary/60 to-transparent" />
-      </motion.div>
-    </section>
+    </main>
   );
 }
