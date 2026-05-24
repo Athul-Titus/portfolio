@@ -292,6 +292,8 @@ body {
 .project-img-container img {
   transition: transform 0.5s ease;
 }
+.group:hover .project-img-container img {
+  transform: scale(1.1);
 }
 
 /* ─── Hero specific styles ─── */

@@ -49,11 +49,17 @@ export default function About() {
           <div className="flex flex-col md:flex-row gap-8 items-start">
             {/* Profile Photo */}
             <AnimateOnScroll className="w-64 h-[26rem] flex-shrink-0 mx-auto md:mx-0">
-              <div className="relative group w-full h-full">
-                <div className="w-full h-full rounded-2xl shadow-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-dark-card flex items-center justify-center">
-                  <span className="text-7xl font-heading font-bold text-primary/30">AT</span>
-                </div>
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative group w-full h-full rounded-2xl shadow-2xl overflow-hidden border border-border-subtle hover:border-[#E63946]/50 transition-all duration-500">
+                <img 
+                  src="/profile.jpg" 
+                  alt="Athul Titus" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.onerror = null; 
+                    e.target.src = "https://via.placeholder.com/400x600/111111/E63946?text=Upload+profile.jpg+to+public+folder";
+                  }}
+                />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
               </div>
             </AnimateOnScroll>
 
@@ -64,15 +70,11 @@ export default function About() {
                   ATHUL TITUS
                 </h3>
                 <p className="text-lg text-white/90 leading-relaxed">
-                  A passionate Full Stack Developer and Computer Science student from Kerala, India.
-                  Currently exploring Quantum Computing (BB84 QKD protocols), building AI-powered tools,
-                  and developing full-stack platforms. I love building products that sit at the intersection
-                  of cutting-edge tech and real-world impact — from quantum-safe key distribution systems
-                  to talent discovery platforms powered by intelligent matching.
+                  A passionate Full Stack Developer and Computer Science student from Kerala, India 🚀. Currently exploring AI, Quantum Computing, and full-stack development while building innovative projects like quantum-safe communication systems and AI-powered platforms. I enjoy creating technology that combines cutting-edge innovation with real-world impact, turning ideas into practical and meaningful solutions.
                 </p>
               </AnimateOnScroll>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Education */}
                 <AnimateOnScroll delay={0.2}>
                   <div className="bg-dark-card/50 p-4 rounded-xl h-full">
@@ -108,23 +110,6 @@ export default function About() {
                           </span>
                         )
                       )}
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-
-                {/* Tech Stack */}
-                <AnimateOnScroll delay={0.6}>
-                  <div className="bg-dark-card/50 p-4 rounded-xl h-full">
-                    <h3 className="text-primary text-base font-semibold mb-3 font-heading">
-                      TECH STACK
-                    </h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {skills.slice(0, 6).map((tech) => (
-                        <div key={tech.name} className="tech-icon-card">
-                          <span className="text-sm">{tech.icon}</span>
-                          <p className="text-white text-[10px] mt-1">{tech.name}</p>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 </AnimateOnScroll>
