@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import AvatarSequence from './AvatarSequence';
 
 export default function Hero() {
   const areaRef = useRef(null);
   const avatarContainerRef = useRef(null);
   const cardsRef = useRef([]);
   const particlesRef = useRef([]);
+  const sequenceRef = useRef(null);
 
   useEffect(() => {
     const area = areaRef.current;
@@ -33,6 +35,11 @@ export default function Hero() {
           const transX = x * 30; // Max 30px translation
           const transY = y * 30;
           avatarContainer.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate3d(${transX}px, ${transY}px, 0)`;
+      }
+
+      // Update the 3D Sequence frame
+      if (sequenceRef.current) {
+          sequenceRef.current.updateFrame(x);
       }
 
       // 2. High-performance Parallax for Cards
@@ -143,13 +150,9 @@ export default function Hero() {
           <div className="absolute w-96 h-96 rounded-full border border-[#E63946]/30 shadow-[0_0_50px_rgba(230,57,70,0.1)] group-hover:shadow-[0_0_80px_rgba(230,57,70,0.3)] transition-shadow duration-500 transform rotate-12 scale-y-50 scale-x-110 animate-[spin_20s_linear_infinite] z-0"></div>
           <div className="absolute w-80 h-80 rounded-full border border-[#E63946]/20 transform -rotate-12 scale-y-50 scale-x-110 animate-[spin_25s_linear_infinite_reverse] z-0"></div>
           
-          {/* Central 3D Avatar */}
+          {/* Central 3D Avatar Sequence */}
           <div ref={avatarContainerRef} id="main-avatar-container" className="relative z-10 avatar-glow transition-all duration-500 animate-float will-change-transform flex items-center justify-center">
-            <img 
-              alt="Athul Titus 3D Avatar" 
-              className="w-[350px] md:w-[450px] h-auto object-contain mix-blend-lighten" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMtIlDYNoNsG_Vskvdi1MyCOXY44E7El4AZx5iGmWpGP8-iMOTAul7LK6G1PkqCc2BTBXV2iL9lYLel6bQAjbIU8g0YYZUaE-tk7OJVlUHFh8SWU3VN46KeiLieEb6BZw3pmixI3iEvfEVj4mnaZyv5ji5P7rL6yoDWAcpVCdCbUjm_wYEMUVWcjFBQW1SEL0c0UicDkxWbS3pYECez7W9mMu0_RDLHKNoicqBWM10CPws115v7dUbEbWw6lArD-TvVnMr_b95gDs"
-            />
+            <AvatarSequence ref={sequenceRef} className="w-[350px] md:w-[450px]" />
           </div>
 
           {/* Floating Particles */}
