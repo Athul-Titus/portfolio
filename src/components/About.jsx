@@ -56,10 +56,9 @@ export default function About() {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onError={(e) => {
                     e.target.onerror = null; 
-                    e.target.src = "https://via.placeholder.com/400x600/111111/E63946?text=Upload+profile.jpg+to+public+folder";
+                    e.target.src = "https://via.placeholder.com/400x600/E63946/ffffff?text=Image+Not+Found";
                   }}
                 />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
               </div>
             </AnimateOnScroll>
 
