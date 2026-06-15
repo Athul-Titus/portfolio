@@ -117,7 +117,7 @@ export default function Hero() {
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
             <button 
-              onClick={() => window.open('https://github.com', '_blank')}
+              onClick={() => window.open('https://github.com/Athul-Titus', '_blank')}
               className="bg-transparent border border-border-subtle hover:border-[#E63946]/50 text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 transition-all duration-300 hover:bg-white/5 hover:scale-95 glass-card">
                 <span className="material-symbols-outlined text-[18px]">code</span>
                 GitHub
@@ -127,10 +127,13 @@ export default function Hero() {
           {/* Stat Pills */}
           <div className="flex flex-wrap gap-4 pt-4 animate-entrance delay-300">
             <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
-              <span className="font-label-sm text-label-sm text-on-surface">6+ Projects</span>
+              <span className="font-label-sm text-label-sm text-on-surface">10+ Projects</span>
             </div>
             <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
               <span className="font-label-sm text-label-sm text-on-surface">IEEE Member</span>
+            </div>
+            <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
+              <span className="font-label-sm text-label-sm text-on-surface">Quantum &amp; AI</span>
             </div>
             <div className="glass-card px-4 py-2 rounded border-l-2 border-l-[#E63946] flex items-center gap-2">
               <span className="font-label-sm text-label-sm text-on-surface">KTU University</span>
