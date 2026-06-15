@@ -131,12 +131,12 @@ export const socialLinks = [
   },
   {
     name: 'LinkedIn',
-    url: 'https://linkedin.com/in/athul-titus',  // Update with your actual LinkedIn URL
+    url: 'https://www.linkedin.com/in/athultitus/',
     icon: 'linkedin',
   },
   {
     name: 'Email',
-    url: 'mailto:athultitus2004@gmail.com',  // Update with your actual email
+    url: 'mailto:athultitus2027@gmail.com',
     icon: 'email',
   },
 ];
