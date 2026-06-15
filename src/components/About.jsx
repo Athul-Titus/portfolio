@@ -99,7 +99,7 @@ export default function About() {
                       SKILLS
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {['Full Stack Dev', 'Quantum Computing', 'AI/ML', 'IoT Systems', 'System Design', 'UI/UX'].map(
+                      {['Full Stack Dev', 'Quantum Computing', 'AI/ML', 'UI/UX'].map(
                         (skill) => (
                           <span
                             key={skill}

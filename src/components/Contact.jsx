@@ -51,10 +51,11 @@ export default function Contact() {
         import.meta.env.VITE_EMAILJS_SERVICE_ID || 'your_service_id',
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'your_template_id',
         {
-          from_name: form.name,
-          from_email: form.email,
+          name: form.name,
+          email: form.email,
           message: form.message,
-          to_name: 'Athul Titus',
+          title: `Portfolio Contact from ${form.name}`,
+          time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
         },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'your_public_key'
       );
@@ -62,7 +63,8 @@ export default function Contact() {
       setForm({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('EmailJS Error:', error);
-      showToast('error', 'Something went wrong. Please try again later.');
+      const errorMsg = error.text || error.message || JSON.stringify(error) || 'Unknown error';
+      showToast('error', `Failed: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
