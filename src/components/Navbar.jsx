@@ -65,7 +65,7 @@ export default function Navbar() {
                 Home
             </button>
           </li>
-          {navLinks.filter(l => l.id !== 'contact').map((link) => (
+          {navLinks.filter(l => l.id !== 'contact' && l.id !== 'hero').map((link) => (
             <li key={link.id}>
               <button
                 onClick={() => scrollTo(link.id)}
@@ -117,7 +117,7 @@ export default function Navbar() {
           <li>
             <button onClick={() => scrollTo('hero')} className="text-white hover:text-primary transition-colors duration-300 text-base tracking-wide bg-transparent border-none">Home</button>
           </li>
-          {navLinks.map((link) => (
+          {navLinks.filter(l => l.id !== 'hero').map((link) => (
             <li key={link.id}>
               <button
                 onClick={() => scrollTo(link.id)}
