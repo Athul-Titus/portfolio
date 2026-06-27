@@ -51,7 +51,7 @@ export default function About() {
             <AnimateOnScroll className="w-64 h-[26rem] flex-shrink-0 mx-auto md:mx-0">
               <div className="relative group w-full h-full rounded-2xl shadow-2xl overflow-hidden border border-border-subtle hover:border-[#E63946]/50 transition-all duration-500">
                 <img 
-                  src="/profile.jpg" 
+                  src={`${import.meta.env.BASE_URL}profile.jpg`} 
                   alt="Athul Titus" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   onError={(e) => {

@@ -29,7 +29,7 @@ const AvatarSequence = forwardRef(({ className = "" }, ref) => {
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image();
       const frameNumber = i.toString().padStart(3, '0');
-      img.src = `/3d_frames/ezgif-frame-${frameNumber}.jpg`;
+      img.src = `${import.meta.env.BASE_URL}3d_frames/ezgif-frame-${frameNumber}.jpg`;
       img.onload = () => {
         loadedCount++;
         // Allow rendering after some frames are loaded to show something quickly, 
@@ -56,7 +56,7 @@ const AvatarSequence = forwardRef(({ className = "" }, ref) => {
       )}
       <img
         ref={imgRef}
-        src="/3d_frames/ezgif-frame-001.jpg"
+        src={`${import.meta.env.BASE_URL}3d_frames/ezgif-frame-001.jpg`}
         alt="Interactive 3D Avatar"
         className={`w-full h-full object-contain mix-blend-lighten transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform select-none ${
           isZoomed ? 'scale-[2.5] -translate-y-[15%]' : 'scale-100 translate-y-0'

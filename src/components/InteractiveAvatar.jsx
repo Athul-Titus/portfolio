@@ -73,7 +73,7 @@ export default function InteractiveAvatar({ className = "" }) {
       >
         {/* Front Image */}
         <img
-          src="/avatar-front.png"
+          src={`${import.meta.env.BASE_URL}avatar-front.png`}
           alt="Avatar Front"
           className="absolute inset-0 w-full h-full object-contain mix-blend-lighten pointer-events-none drop-shadow-[0_0_20px_rgba(230,57,70,0.4)]"
           style={{ backfaceVisibility: "hidden" }}
@@ -81,7 +81,7 @@ export default function InteractiveAvatar({ className = "" }) {
         />
         {/* Back Image */}
         <img
-          src="/avatar-back.png"
+          src={`${import.meta.env.BASE_URL}avatar-back.png`}
           alt="Avatar Back"
           className="absolute inset-0 w-full h-full object-contain mix-blend-lighten pointer-events-none drop-shadow-[0_0_20px_rgba(230,57,70,0.4)]"
           style={{ 
