@@ -166,15 +166,17 @@ body {
 
 /* ─── Glass Card ─── */
 .glass-card {
-  background: var(--color-dark-card);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  border-top: 1px solid var(--color-glass-border-top);
   border-radius: 12px;
   transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
 }
 .glass-card:hover {
-  border-color: rgba(230, 57, 70, 0.3);
+  border-color: rgba(var(--color-primary-rgb), 0.3);
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(230, 57, 70, 0.08);
+  box-shadow: 0 8px 30px rgba(var(--color-primary-rgb), 0.08);
 }
 
 /* ─── Gradient Orb (mobile fallback) ─── */
@@ -323,13 +325,13 @@ body {
 
 /* ─── Hero specific styles ─── */
 .red-glow {
-  box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3);
 }
 .red-glow-hover:hover {
-  box-shadow: 0 0 25px rgba(230, 57, 70, 0.5);
+  box-shadow: 0 0 25px rgba(var(--color-primary-rgb), 0.5);
 }
 .halo-bg {
-  background: radial-gradient(circle at center right, rgba(230, 57, 70, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at center right, rgba(var(--color-primary-rgb), 0.15) 0%, transparent 60%);
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -352,11 +354,33 @@ body {
 .animate-bounce-scroll {
   animation: bounce-scroll 2s infinite;
 }
-.glass-card {
-  backdrop-filter: blur(20px);
-  background-color: rgba(15, 15, 15, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+/* ─── Custom Cursor ─── */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 99999;
+}
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 99998;
+  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+.cursor-ring.hovering {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--color-primary);
 }
 .nav-link {
   position: relative;
@@ -368,7 +392,7 @@ body {
   height: 2px;
   bottom: -4px;
   left: 0;
-  background-color: #E63946;
+  background-color: var(--color-primary);
   transition: width 0.3s ease-in-out;
 }
 .nav-link:hover::after {
@@ -394,15 +418,15 @@ body {
 .delay-300 { animation-delay: 300ms; }
 
 @keyframes breathe-glow {
-  0%, 100% { filter: drop-shadow(0 0 15px rgba(230,57,70,0.3)); }
-  50% { filter: drop-shadow(0 0 35px rgba(230,57,70,0.6)); }
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(var(--color-primary-rgb), 0.3)); }
+  50% { filter: drop-shadow(0 0 35px rgba(var(--color-primary-rgb), 0.6)); }
 }
 .avatar-glow {
   animation: breathe-glow 4s ease-in-out infinite;
 }
 #avatar-area:hover .avatar-glow {
   animation: none;
-  filter: drop-shadow(0 0 50px rgba(230,57,70,0.8));
+  filter: drop-shadow(0 0 50px rgba(var(--color-primary-rgb), 0.8));
 }
 
 .will-change-transform {
