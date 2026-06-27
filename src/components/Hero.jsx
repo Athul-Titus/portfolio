@@ -1,11 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InteractiveAvatar from './InteractiveAvatar';
+import RobotCanvas from './RobotCanvas';
 
 export default function Hero() {
   const areaRef = useRef(null);
   const avatarContainerRef = useRef(null);
   const cardsRef = useRef([]);
   const particlesRef = useRef([]);
+  
+  const [activeView, setActiveView] = useState('avatar');
+  const activeViewRef = useRef('avatar');
+
+  useEffect(() => {
+    activeViewRef.current = activeView;
+  }, [activeView]);
 
   useEffect(() => {
     const area = areaRef.current;
@@ -27,13 +35,17 @@ export default function Hero() {
       const x = (mouseX - centerX) / (rect.width / 2);
       const y = (mouseY - centerY) / (rect.height / 2);
 
-      // 1. Enhanced Parallax & Tilt for Avatar
+      // 1. Enhanced Parallax & Tilt for Avatar (only applied in avatar view)
       if (avatarContainer) {
+        if (activeViewRef.current === 'avatar') {
           const tiltX = -y * 20; // Max 20deg tilt
           const tiltY = x * 20;
           const transX = x * 30; // Max 30px translation
           const transY = y * 30;
           avatarContainer.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate3d(${transX}px, ${transY}px, 0)`;
+        } else {
+          avatarContainer.style.transform = 'none';
+        }
       }
 
       // 2. High-performance Parallax for Cards
@@ -43,27 +55,29 @@ export default function Hero() {
           card.style.transform = `translate3d(${x * depth}px, ${y * depth}px, 0)`;
       });
 
-      // 3. Interactive Particles (Repulsion)
-      particles.forEach(particle => {
-          if (!particle) return;
-          const pRect = particle.getBoundingClientRect();
-          const pCenterX = pRect.left + pRect.width / 2;
-          const pCenterY = pRect.top + pRect.height / 2;
-          
-          const dx = mouseX - pCenterX;
-          const dy = mouseY - pCenterY;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          
-          const repelRadius = 150;
-          if (dist < repelRadius) {
-              const force = (repelRadius - dist) / repelRadius;
-              const moveX = - (dx / dist) * force * 40; // Push away
-              const moveY = - (dy / dist) * force * 40;
-              particle.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-          } else {
-              particle.style.transform = `translate3d(0, 0, 0)`;
-          }
-      });
+      // 3. Interactive Particles (Repulsion - only in avatar view)
+      if (activeViewRef.current === 'avatar') {
+        particles.forEach(particle => {
+            if (!particle) return;
+            const pRect = particle.getBoundingClientRect();
+            const pCenterX = pRect.left + pRect.width / 2;
+            const pCenterY = pRect.top + pRect.height / 2;
+            
+            const dx = mouseX - pCenterX;
+            const dy = mouseY - pCenterY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            const repelRadius = 150;
+            if (dist < repelRadius) {
+                const force = (repelRadius - dist) / repelRadius;
+                const moveX = - (dx / dist) * force * 40; // Push away
+                const moveY = - (dy / dist) * force * 40;
+                particle.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+            } else {
+                particle.style.transform = `translate3d(0, 0, 0)`;
+            }
+        });
+      }
     };
 
     const handleMouseLeave = () => {
@@ -112,13 +126,13 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4 animate-entrance delay-200">
             <button 
               onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-[#E63946] text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 red-glow red-glow-hover transition-all duration-300 hover:scale-95">
+              className="bg-[#E63946] text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 red-glow red-glow-hover transition-all duration-300 hover:scale-95 cursor-none">
                 View Projects
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
             <button 
               onClick={() => window.open('https://github.com/Athul-Titus', '_blank')}
-              className="bg-transparent border border-border-subtle hover:border-[#E63946]/50 text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 transition-all duration-300 hover:bg-white/5 hover:scale-95 glass-card">
+              className="bg-transparent border border-border-subtle hover:border-[#E63946]/50 text-white px-8 py-3 rounded-full font-body-md text-body-md flex items-center gap-2 transition-all duration-300 hover:bg-white/5 hover:scale-95 glass-card cursor-none">
                 <span className="material-symbols-outlined text-[18px]">code</span>
                 GitHub
             </button>
@@ -143,20 +157,57 @@ export default function Hero() {
 
         {/* Right Column: 3D Visual Area */}
         <div ref={areaRef} id="avatar-area" className="relative h-[500px] hidden lg:flex items-center justify-center group perspective-[1000px]">
-          {/* Abstract Halo/Ring */}
-          <div className="absolute w-96 h-96 rounded-full border border-[#E63946]/30 shadow-[0_0_50px_rgba(230,57,70,0.1)] group-hover:shadow-[0_0_80px_rgba(230,57,70,0.3)] transition-shadow duration-500 transform rotate-12 scale-y-50 scale-x-110 animate-[spin_20s_linear_infinite] z-0"></div>
-          <div className="absolute w-80 h-80 rounded-full border border-[#E63946]/20 transform -rotate-12 scale-y-50 scale-x-110 animate-[spin_25s_linear_infinite_reverse] z-0"></div>
           
-          {/* Central 3D Interactive Avatar */}
-          <div ref={avatarContainerRef} id="main-avatar-container" className="relative z-10 avatar-glow transition-all duration-500 animate-float will-change-transform flex items-center justify-center">
-            <InteractiveAvatar className="w-[350px] md:w-[450px] h-[500px]" />
+          {/* View Toggle Button */}
+          <div className="absolute top-0 right-4 z-20 flex gap-2 bg-dark-card/60 backdrop-blur-md border border-border-subtle p-1 rounded-full text-xs font-label-sm">
+            <button
+              onClick={() => setActiveView('avatar')}
+              className={`px-3.5 py-1.5 rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-none ${
+                activeView === 'avatar' 
+                  ? 'bg-[#E63946] text-white shadow-lg shadow-[#E63946]/20' 
+                  : 'text-text-muted hover:text-white'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">face</span>
+              Avatar
+            </button>
+            <button
+              onClick={() => setActiveView('desk')}
+              className={`px-3.5 py-1.5 rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-none ${
+                activeView === 'desk' 
+                  ? 'bg-[#E63946] text-white shadow-lg shadow-[#E63946]/20' 
+                  : 'text-text-muted hover:text-white'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">desktop_mac</span>
+              3D Desk
+            </button>
           </div>
 
-          {/* Floating Particles */}
-          <div ref={el => particlesRef.current[0] = el} className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
-          <div ref={el => particlesRef.current[1] = el} className="absolute top-3/4 left-1/3 w-1 h-1 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow delay-100 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
-          <div ref={el => particlesRef.current[2] = el} className="absolute top-1/2 right-1/4 w-3 h-3 bg-[#E63946] rounded-full blur-[2px] animate-pulse-slow delay-300 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
-          <div ref={el => particlesRef.current[3] = el} className="absolute bottom-1/4 right-1/3 w-1.5 h-1.5 bg-white rounded-full blur-[1px] animate-pulse-slow delay-200 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          {/* Abstract Halo/Rings (Only visible for avatar view) */}
+          <div className={`absolute w-96 h-96 rounded-full border border-[#E63946]/30 shadow-[0_0_50px_rgba(230,57,70,0.1)] group-hover:shadow-[0_0_80px_rgba(230,57,70,0.3)] transition-all duration-500 transform rotate-12 scale-y-50 scale-x-110 animate-[spin_20s_linear_infinite] z-0 ${activeView === 'avatar' ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'}`}></div>
+          <div className={`absolute w-80 h-80 rounded-full border border-[#E63946]/20 transform -rotate-12 scale-y-50 scale-x-110 animate-[spin_25s_linear_infinite_reverse] z-0 ${activeView === 'avatar' ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'}`}></div>
+          
+          {/* Central 3D Interactive Container */}
+          <div ref={avatarContainerRef} id="main-avatar-container" className="w-full h-full relative z-10 avatar-glow transition-all duration-500 animate-float will-change-transform flex items-center justify-center">
+            {/* Avatar View */}
+            <div className={`w-full h-full flex items-center justify-center transition-all duration-500 ${activeView === 'avatar' ? 'opacity-100 scale-100' : 'opacity-0 scale-90 absolute pointer-events-none'}`}>
+              <InteractiveAvatar className="w-[350px] md:w-[450px] h-[500px]" />
+            </div>
+
+            {/* 3D Desk View */}
+            <div className={`w-full h-full flex items-center justify-center transition-all duration-500 ${activeView === 'desk' ? 'opacity-100 scale-100' : 'opacity-0 scale-90 absolute pointer-events-none'}`}>
+              <RobotCanvas />
+            </div>
+          </div>
+
+          {/* Floating Particles (Only active in avatar view) */}
+          <div className={`transition-opacity duration-500 ${activeView === 'avatar' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            <div ref={el => particlesRef.current[0] = el} className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+            <div ref={el => particlesRef.current[1] = el} className="absolute top-3/4 left-1/3 w-1 h-1 bg-[#E63946] rounded-full blur-[1px] animate-pulse-slow delay-100 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+            <div ref={el => particlesRef.current[2] = el} className="absolute top-1/2 right-1/4 w-3 h-3 bg-[#E63946] rounded-full blur-[2px] animate-pulse-slow delay-300 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+            <div ref={el => particlesRef.current[3] = el} className="absolute bottom-1/4 right-1/3 w-1.5 h-1.5 bg-white rounded-full blur-[1px] animate-pulse-slow delay-200 interactive-particle transition-transform duration-300 ease-out will-change-transform"></div>
+          </div>
           
         </div>
       </div>
