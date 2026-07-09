@@ -69,8 +69,16 @@ export default function Navbar() {
 
   const scrollTo = (id) => {
     setMobileOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setActiveLink(id);
+    if (id === 'hero') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    // For all other sections: jump instantly past the hero scroll zone
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top, behavior: 'instant' });
   };
 
   return (
