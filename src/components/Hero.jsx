@@ -64,10 +64,17 @@ export default function Hero() {
         const scale = 1 + ease * 5.8;
         const { tx, ty } = figureOffset.current;
         fw.style.transform = `translate(${tx * ease}px, ${ty * ease}px) scale(${scale})`;
-        // slight motion blur on zoom-in
-        const blur = ease > 0.65 ? (ease - 0.65) / 0.35 * 6 : 0;
-        fw.style.filter = blur > 0 ? `blur(${blur.toFixed(1)}px)` : '';
+        // no blur — keep figure sharp during zoom
+        fw.style.filter = '';
       }
+
+      /* Orbit rings + particles: fade out as figure starts zooming ─ */
+      cardsRef.current.forEach(el => {
+        if (el) el.style.opacity = Math.max(0, 1 - p * 5);
+      });
+      particlesRef.current.forEach(el => {
+        if (el) el.style.opacity = Math.max(0, 1 - p * 6);
+      });
 
       /* Left column: fade + drift up ──────────────────────────── */
       const c = contentRef.current;
@@ -77,10 +84,10 @@ export default function Hero() {
         c.style.transform = `translateY(${p * -55}px)`;
       }
 
-      /* Vignette overlay ──────────────────────────────────────── */
+      /* Vignette overlay — only at very end of scroll ─────────── */
       const o = overlayRef.current;
       if (o) {
-        const opa = p > 0.58 ? Math.min(1, (p - 0.58) / 0.42) : 0;
+        const opa = p > 0.75 ? Math.min(1, (p - 0.75) / 0.25) : 0;
         o.style.opacity = opa;
       }
 
