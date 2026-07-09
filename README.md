@@ -2,7 +2,7 @@
 
 Interactive 3D developer portfolio showcasing immersive experiences, quantum computation interests, AI tools, and full-stack projects.
 
-🔗 **Live Site:** [https://Athul-Titus.github.io](https://Athul-Titus.github.io)
+🔗 **Live Site:** [https://portfolio-pi-snowy-54.vercel.app/](https://portfolio-pi-snowy-54.vercel.app/)
 
 ---
 
