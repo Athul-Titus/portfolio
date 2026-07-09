@@ -111,7 +111,7 @@ export default function ProjectCard({ project, index }) {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-heading font-medium text-white/80 hover:text-white border border-white/20 hover:border-white/50 px-3 py-1 rounded-full transition-all duration-200 cursor-none"
+              className="inline-flex items-center gap-1.5 text-sm font-heading font-medium text-on-surface-variant hover:text-on-surface border border-border-subtle hover:border-primary/50 px-3 py-1 rounded-full transition-all duration-200 cursor-none"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />

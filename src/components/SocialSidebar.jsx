@@ -27,7 +27,7 @@ export default function SocialSidebar() {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white hover:text-primary transition-colors duration-300"
+          className="text-on-surface-variant hover:text-primary transition-colors duration-300"
           aria-label={link.name}
         >
           {icons[link.icon]}

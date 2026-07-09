@@ -49,7 +49,7 @@ export default function About() {
           <div className="flex flex-col md:flex-row gap-8 items-start">
             {/* Profile Photo */}
             <AnimateOnScroll className="w-64 h-[26rem] flex-shrink-0 mx-auto md:mx-0">
-              <div className="relative group w-full h-full rounded-2xl shadow-2xl overflow-hidden border border-border-subtle hover:border-[#E63946]/50 transition-all duration-500">
+              <div className="relative group w-full h-full rounded-2xl shadow-2xl overflow-hidden border border-border-subtle hover:border-primary/50 transition-all duration-500">
                 <img 
                   src={`${import.meta.env.BASE_URL}profile.jpg`} 
                   alt="Athul Titus" 
@@ -68,11 +68,11 @@ export default function About() {
                 <h3 className="text-primary text-xl font-semibold font-heading">
                   ATHUL TITUS
                 </h3>
-                <p className="text-lg text-white/90 leading-relaxed">
+                <p className="text-lg text-text-primary leading-relaxed">
                   A passionate Full Stack Developer and Computer Science student from Kerala, India 🚀. Currently exploring AI, Quantum Computing, and full-stack development while building innovative projects like quantum-safe communication systems and AI-powered platforms. I enjoy creating technology that combines cutting-edge innovation with real-world impact, turning ideas into practical and meaningful solutions.
                 </p>
               </AnimateOnScroll>
-
+ 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Education */}
                 <AnimateOnScroll delay={0.2}>
@@ -83,9 +83,9 @@ export default function About() {
                     <div className="space-y-3">
                       {education.map((edu, i) => (
                         <div key={i} className="border-l-2 border-primary pl-3">
-                          <h4 className="text-white text-sm font-medium">{edu.school}</h4>
+                          <h4 className="text-text-primary text-sm font-medium">{edu.school}</h4>
                           <p className="text-primary text-xs">{edu.period}</p>
-                          <p className="text-gray-400 text-xs">{edu.degree}</p>
+                          <p className="text-text-secondary text-xs">{edu.degree}</p>
                         </div>
                       ))}
                     </div>
