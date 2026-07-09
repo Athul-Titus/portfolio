@@ -142,39 +142,6 @@ export default function HackerFigure() {
           }}
         />
 
-        {/*
-         * ── Left depth edge ──────────────────────────────────
-         * A thin strip pinned to the left edge, folded 90° inward.
-         * transform-origin: left center keeps it flush with the left edge.
-         */}
-        <div
-          style={{
-            position:        'absolute',
-            top:             '8%',
-            bottom:          '8%',
-            left:            0,
-            width:           '56px',
-            transformOrigin: 'left center',
-            transform:       'rotateY(-90deg)',
-            background:      'linear-gradient(to right, rgba(230,57,70,0.45) 0%, rgba(10,2,2,0.92) 100%)',
-            borderRadius:    '2px 0 0 2px',
-          }}
-        />
-
-        {/* ── Right depth edge ─────────────────────────────── */}
-        <div
-          style={{
-            position:        'absolute',
-            top:             '8%',
-            bottom:          '8%',
-            right:           0,
-            width:           '56px',
-            transformOrigin: 'right center',
-            transform:       'rotateY(90deg)',
-            background:      'linear-gradient(to left, rgba(230,57,70,0.45) 0%, rgba(10,2,2,0.92) 100%)',
-            borderRadius:    '0 2px 2px 0',
-          }}
-        />
       </div>
 
       {/* ── Drag hint ─────────────────────────────────────── */}
