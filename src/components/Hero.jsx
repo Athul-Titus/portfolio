@@ -12,26 +12,51 @@ function makeStars() {
   }));
 }
 
-/* ─── Falling particle config ──────────────────────────────── */
-const PARTICLE_COUNT = 90;
-const COLORS = [
-  [230, 57,  70],   // primary red
-  [255, 120, 130],  // light red
-  [255, 255, 255],  // white
-  [180, 220, 255],  // icy blue
-];
+/* ─── Falling element config ──────────────────────────────── */
+const PARTICLE_COUNT = 65;
+const RUNE_CHARS = ['01', '10', '</>', '{}', '/>', '0x', '#!', '>>'];
+
+// Colour palette: mostly reds with occasional whites / ice-blue
+function pickRGB(rand) {
+  if (rand < 0.50) return [230, 57,  70];   // brand red
+  if (rand < 0.70) return [255, 110, 120];  // soft red
+  if (rand < 0.87) return [255, 255, 255];  // white
+  return              [160, 210, 255];       // ice blue
+}
 
 function makeParticle(W, H, scattered = false) {
-  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const roll = Math.random();
+  // kind distribution
+  const kind = roll < 0.30 ? 'comet'
+             : roll < 0.52 ? 'orb'
+             : roll < 0.72 ? 'fragment'
+             : roll < 0.88 ? 'spark'
+             : 'rune';
+
+  const vy = kind === 'comet'    ? 2.8 + Math.random() * 3.2
+           : kind === 'spark'    ? 3.5 + Math.random() * 4.0
+           : kind === 'orb'      ? 0.35 + Math.random() * 0.65
+           :                       0.8  + Math.random() * 1.6;
+
+  const size = kind === 'orb'      ? 10 + Math.random() * 16
+             : kind === 'comet'   ? 3  + Math.random() * 5
+             : kind === 'fragment'? 5  + Math.random() * 8
+             : kind === 'spark'   ? 1.5 + Math.random() * 2
+             : 0; // rune uses text
+
   return {
+    kind,
     x:     Math.random() * W,
-    y:     scattered ? Math.random() * H : -Math.random() * H * 0.5,
-    vx:    (Math.random() - 0.5) * 0.6,
-    vy:    0.6 + Math.random() * 2.4,
-    size:  1.5 + Math.random() * 5,
-    alpha: 0.35 + Math.random() * 0.65,
-    color,
-    type:  Math.random() < 0.15 ? 'square' : 'circle',  // 15% are squares / diamonds
+    y:     scattered ? Math.random() * H : -(Math.random() * H * 0.4),
+    vx:    (Math.random() - 0.5) * 0.55,
+    vy,
+    size,
+    angle: Math.random() * Math.PI * 2,
+    spin:  (Math.random() - 0.5) * 0.04,
+    alpha: 0.45 + Math.random() * 0.55,
+    rgb:   pickRGB(Math.random()),
+    rune:  RUNE_CHARS[Math.floor(Math.random() * RUNE_CHARS.length)],
+    fontSize: 9 + Math.floor(Math.random() * 9),
   };
 }
 
@@ -137,40 +162,109 @@ export default function Hero() {
 
       if (visibility > 0.05) {
         particles.forEach(pt => {
-          /* gravity + drift */
-          pt.vy += 0.012;
+          /* physics */
+          pt.vy += 0.014;
           pt.x  += pt.vx;
           pt.y  += pt.vy;
+          pt.angle += pt.spin;
 
-          /* wrap: reset when below bottom */
-          if (pt.y > H + 20) {
+          if (pt.y > H + 60) {
             Object.assign(pt, makeParticle(W, H, false));
+            return;
           }
 
           const alpha = pt.alpha * visibility;
-          const [r, g, b] = pt.color;
-
-          /* glow shadow */
+          const [r, g, b] = pt.rgb;
           ctx.save();
-          ctx.shadowBlur  = 12;
-          ctx.shadowColor = `rgba(${r},${g},${b},${(alpha * 0.8).toFixed(2)})`;
 
-          ctx.fillStyle   = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-          ctx.globalAlpha = 1;
+          switch (pt.kind) {
 
-          if (pt.type === 'square') {
-            /* small diamond */
-            const s = pt.size;
-            ctx.save();
-            ctx.translate(pt.x, pt.y);
-            ctx.rotate(Math.PI / 4);
-            ctx.fillRect(-s / 2, -s / 2, s, s);
-            ctx.restore();
-          } else {
-            /* glowing orb */
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
-            ctx.fill();
+            /* ── COMET: bright head + long gradient tail ──────── */
+            case 'comet': {
+              const tailLen = pt.vy * 9;
+              const grad = ctx.createLinearGradient(
+                pt.x, pt.y - tailLen, pt.x, pt.y
+              );
+              grad.addColorStop(0,   `rgba(${r},${g},${b},0)`);
+              grad.addColorStop(0.6, `rgba(${r},${g},${b},${(alpha * 0.4).toFixed(2)})`);
+              grad.addColorStop(1,   `rgba(${r},${g},${b},${alpha.toFixed(2)})`);
+              ctx.strokeStyle = grad;
+              ctx.lineWidth   = pt.size * 1.4;
+              ctx.shadowBlur  = 18;
+              ctx.shadowColor = `rgba(${r},${g},${b},0.9)`;
+              ctx.beginPath();
+              ctx.moveTo(pt.x, pt.y - tailLen);
+              ctx.lineTo(pt.x, pt.y);
+              ctx.stroke();
+              // bright head orb
+              ctx.shadowBlur  = 25;
+              ctx.fillStyle   = `rgba(255,255,255,${(alpha * 0.95).toFixed(2)})`;
+              ctx.beginPath();
+              ctx.arc(pt.x, pt.y, pt.size * 0.6, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            }
+
+            /* ── ORB: soft radial-gradient pulsing blob ───────── */
+            case 'orb': {
+              const radGrad = ctx.createRadialGradient(
+                pt.x, pt.y, 0,
+                pt.x, pt.y, pt.size
+              );
+              radGrad.addColorStop(0,   `rgba(${r},${g},${b},${alpha.toFixed(2)})`);
+              radGrad.addColorStop(0.45,`rgba(${r},${g},${b},${(alpha * 0.5).toFixed(2)})`);
+              radGrad.addColorStop(1,   `rgba(${r},${g},${b},0)`);
+              ctx.shadowBlur  = 30;
+              ctx.shadowColor = `rgba(${r},${g},${b},0.7)`;
+              ctx.fillStyle   = radGrad;
+              ctx.beginPath();
+              ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            }
+
+            /* ── FRAGMENT: rotating glowing diamond ──────────── */
+            case 'fragment': {
+              ctx.translate(pt.x, pt.y);
+              ctx.rotate(pt.angle);
+              ctx.shadowBlur  = 14;
+              ctx.shadowColor = `rgba(${r},${g},${b},0.8)`;
+              ctx.fillStyle   = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+              ctx.strokeStyle = `rgba(255,255,255,${(alpha * 0.4).toFixed(2)})`;
+              ctx.lineWidth   = 0.8;
+              const s = pt.size;
+              ctx.beginPath();
+              ctx.moveTo( 0,    -s);
+              ctx.lineTo( s*0.55, 0);
+              ctx.lineTo( 0,     s);
+              ctx.lineTo(-s*0.55, 0);
+              ctx.closePath();
+              ctx.fill();
+              ctx.stroke();
+              break;
+            }
+
+            /* ── SPARK: tiny white-hot point falling fast ─────── */
+            case 'spark': {
+              ctx.shadowBlur  = 10;
+              ctx.shadowColor = `rgba(255,240,180,0.95)`;
+              ctx.fillStyle   = `rgba(255,250,220,${alpha.toFixed(2)})`;
+              ctx.beginPath();
+              ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            }
+
+            /* ── RUNE: glowing monospace code glyph ─────────── */
+            case 'rune': {
+              ctx.font        = `bold ${pt.fontSize}px 'Courier New', monospace`;
+              ctx.textAlign   = 'center';
+              ctx.shadowBlur  = 14;
+              ctx.shadowColor = `rgba(${r},${g},${b},0.95)`;
+              ctx.fillStyle   = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+              ctx.fillText(pt.rune, pt.x, pt.y);
+              break;
+            }
           }
 
           ctx.restore();
