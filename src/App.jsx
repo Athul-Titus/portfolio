@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import Loader from './components/Loader';
-import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -18,7 +17,6 @@ export default function App() {
   return (
     <>
       {loading && <Loader onComplete={handleLoaderComplete} />}
-      <CustomCursor />
       <Navbar />
       <main>
         <Hero />

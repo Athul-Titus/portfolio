@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import HackerFigure from './HackerFigure';
 
-/* ─── Warp star setup ──────────────────────────────────────── */
+/* ─── Warp star config ─────────────────────────────────────── */
 const STAR_COUNT = 160;
 function makeStars() {
   return Array.from({ length: STAR_COUNT }, () => ({
@@ -12,6 +12,30 @@ function makeStars() {
   }));
 }
 
+/* ─── Falling particle config ──────────────────────────────── */
+const PARTICLE_COUNT = 90;
+const COLORS = [
+  [230, 57,  70],   // primary red
+  [255, 120, 130],  // light red
+  [255, 255, 255],  // white
+  [180, 220, 255],  // icy blue
+];
+
+function makeParticle(W, H, scattered = false) {
+  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  return {
+    x:     Math.random() * W,
+    y:     scattered ? Math.random() * H : -Math.random() * H * 0.5,
+    vx:    (Math.random() - 0.5) * 0.6,
+    vy:    0.6 + Math.random() * 2.4,
+    size:  1.5 + Math.random() * 5,
+    alpha: 0.35 + Math.random() * 0.65,
+    color,
+    type:  Math.random() < 0.15 ? 'square' : 'circle',  // 15% are squares / diamonds
+  };
+}
+
+
 export default function Hero() {
   /* ── Refs ───────────────────────────────────────────────── */
   const heroWrapRef  = useRef(null);   // 200 vh outer
@@ -20,6 +44,7 @@ export default function Hero() {
   const overlayRef   = useRef(null);   // black-out veil
   const scrollIndRef = useRef(null);
   const canvasRef    = useRef(null);
+  const ptCanvasRef  = useRef(null);  // falling particles canvas
 
   const scrollProg   = useRef(0);      // shared between scroll + canvas RAF
 
@@ -70,6 +95,85 @@ export default function Hero() {
           ctx.moveTo(px, py);
           ctx.lineTo(x, y);
           ctx.stroke();
+        });
+      }
+
+      rafId = requestAnimationFrame(loop);
+    };
+
+    rafId = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  /* ── Falling-particle loop (lives inside the overlay) ─────── */
+  useEffect(() => {
+    const canvas = ptCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let rafId;
+
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Initialise particles scattered across the screen so they
+    // appear immediately when the overlay becomes visible.
+    let particles = Array.from({ length: PARTICLE_COUNT }, () =>
+      makeParticle(canvas.width, canvas.height, true)
+    );
+
+    const loop = () => {
+      const p          = scrollProg.current;
+      const visibility = p > 0.55 ? Math.min(1, (p - 0.55) / 0.33) : 0;
+
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      if (visibility > 0.05) {
+        particles.forEach(pt => {
+          /* gravity + drift */
+          pt.vy += 0.012;
+          pt.x  += pt.vx;
+          pt.y  += pt.vy;
+
+          /* wrap: reset when below bottom */
+          if (pt.y > H + 20) {
+            Object.assign(pt, makeParticle(W, H, false));
+          }
+
+          const alpha = pt.alpha * visibility;
+          const [r, g, b] = pt.color;
+
+          /* glow shadow */
+          ctx.save();
+          ctx.shadowBlur  = 12;
+          ctx.shadowColor = `rgba(${r},${g},${b},${(alpha * 0.8).toFixed(2)})`;
+
+          ctx.fillStyle   = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
+          ctx.globalAlpha = 1;
+
+          if (pt.type === 'square') {
+            /* small diamond */
+            const s = pt.size;
+            ctx.save();
+            ctx.translate(pt.x, pt.y);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(-s / 2, -s / 2, s, s);
+            ctx.restore();
+          } else {
+            /* glowing orb */
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.restore();
         });
       }
 
@@ -234,12 +338,22 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Black-out veil (smooth transition to next section) ── */}
+        {/* ── Overlay with falling particles (smooth transition) ── */}
         <div
           ref={overlayRef}
-          className="absolute inset-0 bg-dark pointer-events-none"
-          style={{ zIndex: 30, opacity: 0 }}
-        />
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            zIndex:     30,
+            opacity:    0,
+            background: 'linear-gradient(to bottom, rgba(5,0,0,0.97) 0%, rgba(2,0,0,1) 100%)',
+          }}
+        >
+          <canvas
+            ref={ptCanvasRef}
+            className="absolute inset-0"
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
 
         {/* ── Scroll indicator ──────────────────────────────── */}
         <div

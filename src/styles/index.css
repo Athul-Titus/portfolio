@@ -366,34 +366,6 @@ body {
 .animate-bounce-scroll {
   animation: bounce-scroll 2s infinite;
 }
-/* ─── Custom Cursor ─── */
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background-color: var(--color-primary);
-  border-radius: 50%;
-  position: fixed;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 99999;
-}
-.cursor-ring {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--color-primary);
-  border-radius: 50%;
-  position: fixed;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 99998;
-  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-}
-.cursor-ring.hovering {
-  width: 60px;
-  height: 60px;
-  background-color: rgba(var(--color-primary-rgb), 0.1);
-  border-color: var(--color-primary);
-}
 .nav-link {
   position: relative;
 }
