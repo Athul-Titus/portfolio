@@ -1,121 +1,119 @@
 import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { education, skills } from '../constants';
 
-function SectionHeading({ children, bracketLeft = '<>', bracketRight = '</>' }) {
-  return (
-    <div className="flex justify-center mb-16">
-      <h2 className="section-heading">
-        <span className="bracket bracket-left">{bracketLeft}</span>
-        {children}
-        <span className="bracket bracket-right">{bracketRight}</span>
-      </h2>
-    </div>
-  );
+function useReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 }
 
-function AnimateOnScroll({ children, delay = 0, className = '' }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => el.classList.add('visible'), delay * 1000);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [delay]);
+/* Tech logos as text pills — matching the reference */
+const techStack = [
+  { name: 'React', emoji: '⚛️' },
+  { name: 'Python', emoji: '🐍' },
+  { name: 'Node.js', emoji: '🟢' },
+  { name: 'TypeScript', emoji: '📘' },
+  { name: 'Qiskit', emoji: '⚛️' },
+  { name: 'Flutter', emoji: '🐦' },
+  { name: 'Three.js', emoji: '🎮' },
+  { name: 'PostgreSQL', emoji: '🐘' },
+];
 
+function Spark4({ size = 40, style = {}, opacity = 0.35 }) {
   return (
-    <div ref={ref} className={`animate-on-scroll ${className}`}>
-      {children}
+    <div className="about-star" style={style}>
+      <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+        <path
+          d="M20 0 C20 0 20 16 20 20 C20 24 20 40 20 40 C20 40 24 20 40 20 C40 20 20 20 0 20 C0 20 20 20 20 0Z"
+          fill={`rgba(0,0,0,${opacity})`}
+        />
+      </svg>
     </div>
   );
 }
 
 export default function About() {
+  useReveal();
+
   return (
-    <section id="about" className="py-20 bg-dark">
-      <div className="max-w-6xl mx-auto px-4">
-        <SectionHeading>About Me</SectionHeading>
+    <section id="about" className="about-section">
+      <div style={{ position: 'relative' }}>
+        {/* Decorative sparks */}
+        <Spark4 size={52} style={{ top: '10%', left: '3%' }} opacity={0.2} />
+        <Spark4 size={28} style={{ bottom: '30%', right: '4%' }} opacity={0.2} />
 
-        <div className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            {/* Profile Photo */}
-            <AnimateOnScroll className="w-64 h-[26rem] flex-shrink-0 mx-auto md:mx-0">
-              <div className="relative group w-full h-full rounded-2xl shadow-2xl overflow-hidden border border-border-subtle hover:border-primary/50 transition-all duration-500">
-                <img 
-                  src={`${import.meta.env.BASE_URL}profile.jpg`} 
-                  alt="Athul Titus" 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  onError={(e) => {
-                    e.target.onerror = null; 
-                    e.target.src = "https://via.placeholder.com/400x600/E63946/ffffff?text=Image+Not+Found";
-                  }}
-                />
+        <div className="about-inner">
+          {/* LEFT: Photo in clipboard frame */}
+          <div className="about-photo-wrap reveal-left">
+            <div className="about-photo-frame">
+              <div className="about-photo-clip" />
+              <img
+                src={`${import.meta.env.BASE_URL}profile.jpg`}
+                alt="Athul Titus"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
+                onError={e => {
+                  e.target.onerror = null;
+                  e.target.src = `${import.meta.env.BASE_URL}profilepic.png`;
+                }}
+              />
+            </div>
+          </div>
+
+          {/* RIGHT: Bio + Tech */}
+          <div className="about-text">
+            <h2 className="about-hello reveal">Hello!</h2>
+            <p className="about-bio reveal reveal-delay-1">
+              Hi, my name is <strong>ATHUL TITUS</strong>, a passionate Full Stack Developer
+              and Computer Science student from Kerala, India 🚀. Currently exploring
+              AI, Quantum Computing, and full-stack development while building innovative
+              projects — from quantum-safe communication systems to AI-powered platforms.
+              I enjoy creating technology that turns cutting-edge ideas into practical,
+              meaningful solutions.
+            </p>
+
+            {/* Education badge */}
+            <div className="reveal reveal-delay-2" style={{ marginBottom: '1.75rem' }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.75rem',
+                background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '12px', padding: '0.75rem 1.25rem',
+              }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.15rem' }}>Currently Studying</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'white' }}>B.Tech CSE (Data Science) · KTU · 2022–Present</div>
+                </div>
               </div>
-            </AnimateOnScroll>
+            </div>
 
-            {/* Bio + Cards */}
-            <div className="flex-grow">
-              <AnimateOnScroll delay={0.1} className="space-y-4 mb-4">
-                <h3 className="text-primary text-xl font-semibold font-heading">
-                  ATHUL TITUS
-                </h3>
-                <p className="text-lg text-text-primary leading-relaxed">
-                  A passionate Full Stack Developer and Computer Science student from Kerala, India 🚀. Currently exploring AI, Quantum Computing, and full-stack development while building innovative projects like quantum-safe communication systems and AI-powered platforms. I enjoy creating technology that combines cutting-edge innovation with real-world impact, turning ideas into practical and meaningful solutions.
-                </p>
-              </AnimateOnScroll>
- 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Education */}
-                <AnimateOnScroll delay={0.2}>
-                  <div className="bg-dark-card/50 p-4 rounded-xl h-full">
-                    <h3 className="text-primary text-base font-semibold mb-3 font-heading">
-                      EDUCATION
-                    </h3>
-                    <div className="space-y-3">
-                      {education.map((edu, i) => (
-                        <div key={i} className="border-l-2 border-primary pl-3">
-                          <h4 className="text-text-primary text-sm font-medium">{edu.school}</h4>
-                          <p className="text-primary text-xs">{edu.period}</p>
-                          <p className="text-text-secondary text-xs">{edu.degree}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-
-                {/* Skills */}
-                <AnimateOnScroll delay={0.4}>
-                  <div className="bg-dark-card/50 p-4 rounded-xl h-full">
-                    <h3 className="text-primary text-base font-semibold mb-3 font-heading">
-                      SKILLS
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {['Full Stack Dev', 'Quantum Computing', 'AI/ML', 'UI/UX'].map(
-                        (skill) => (
-                          <span
-                            key={skill}
-                            className="px-2 py-1 bg-primary/10 text-primary rounded-lg text-xs"
-                          >
-                            {skill}
-                          </span>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-              </div>
+            {/* Tech stack pills */}
+            <div className="tech-logos reveal reveal-delay-3">
+              {techStack.map(t => (
+                <span key={t.name} className="tech-logo-item">
+                  <span>{t.emoji}</span>
+                  {t.name}
+                </span>
+              ))}
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Wave bottom: red → light grey */}
+      <div className="about-wave">
+        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+          style={{ display: 'block', width: '100%', height: '90px' }}>
+          <path
+            d="M0,45 C360,90 720,0 1080,45 C1260,67.5 1380,22.5 1440,45 L1440,90 L0,90 Z"
+            fill="#f5f5f5"
+          />
+        </svg>
       </div>
     </section>
   );

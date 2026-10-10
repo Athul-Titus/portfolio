@@ -1,63 +1,74 @@
-import { lazy, Suspense } from 'react';
-import { motion } from 'framer-motion';
-import { skills } from '../constants';
+import { useEffect } from 'react';
 
-const BallCanvas = lazy(() => import('./BallCanvas'));
+function useReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
+const skillGroups = [
+  {
+    category: 'Frontend Development',
+    desc: 'Building responsive, interactive user interfaces and web experiences.',
+    skills: ['React', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'Three.js', 'Framer Motion', 'Next.js', 'HTML & CSS'],
+  },
+  {
+    category: 'Backend Architecture',
+    desc: 'Developing robust APIs and scalable database architectures.',
+    skills: ['Node.js', 'Flask', 'Python', 'PostgreSQL', 'REST APIs', 'SQL', 'Express.js'],
+  },
+  {
+    category: 'AI & Quantum Computing',
+    desc: 'Leveraging cutting-edge AI/ML and quantum technologies for real-world problems.',
+    skills: ['Qiskit', 'scikit-learn', 'Streamlit', 'Data Science', 'Computer Vision', 'ML Models', 'BB84 QKD'],
+  },
+  {
+    category: 'Tools & Platforms',
+    desc: 'Efficient workflows with modern development tools and deployment platforms.',
+    skills: ['Git', 'GitHub', 'Vercel', 'Flutter / Dart', 'ESP32 / IoT', 'Web3 / Blockchain', 'Figma'],
+  },
+];
 
 export default function Skills() {
-  return (
-    <section id="skills" className="py-24">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section Heading */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
-        >
-          <h2 className="section-heading">
-            Technologies I Work With
-            <motion.span
-              className="animated-underline absolute bottom-[-8px] left-0 h-[3px] bg-primary block w-full"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              style={{ transformOrigin: 'left' }}
-            />
-          </h2>
-        </motion.div>
+  useReveal();
 
-        {/* Skills Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {skills.map((skill, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="flex flex-col items-center"
-            >
-              <Suspense
-                fallback={
-                  <div className="ball-canvas flex items-center justify-center">
-                    <div
-                      className="w-12 h-12 rounded-full"
-                      style={{ background: skill.color, opacity: 0.5 }}
-                    />
-                  </div>
-                }
-              >
-                <BallCanvas color={skill.color} />
-              </Suspense>
-              <span className="text-text-secondary text-sm font-body mt-2 text-center">
-                {skill.name}
-              </span>
-            </motion.div>
-          ))}
+  return (
+    <section id="skills" className="skills-section light-section dot-grid">
+      {/* Header */}
+      <div className="skills-header">
+        <div className="reveal-left">
+          <span className="section-pill">TECHNICAL STACK</span>
+          <h2 className="section-title">
+            Tools of the <span className="accent">Trade.</span>
+          </h2>
         </div>
+        <p className="section-desc reveal-right" style={{ marginTop: '1.5rem' }}>
+          A curated selection of modern technologies and frameworks I use to build
+          scalable, high-performance digital solutions.
+        </p>
+      </div>
+
+      {/* Skill cards grid */}
+      <div className="skills-grid">
+        {skillGroups.map((group, i) => (
+          <div
+            key={group.category}
+            className={`skill-card reveal reveal-delay-${i + 1}`}
+          >
+            <h3 className="skill-card-title">{group.category}</h3>
+            <p className="skill-card-desc">{group.desc}</p>
+            <div className="skill-tags">
+              {group.skills.map(s => (
+                <span key={s} className="skill-tag">{s}</span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -1,39 +1,213 @@
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { projects } from '../constants';
-import ProjectCard from './ProjectCard';
 
-export default function Projects() {
+function useReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
+/* Generate a preview gradient per project color */
+function getBg(color) {
+  return `linear-gradient(135deg, ${color}22 0%, ${color}11 60%, transparent 100%)`;
+}
+
+/* Browser-mockup frame wrapping the project preview */
+function BrowserFrame({ project }) {
   return (
-    <section id="projects" className="py-24">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section Heading */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
-        >
-          <h2 className="section-heading">
-            My Projects
-            <motion.span
-              className="animated-underline absolute bottom-[-8px] left-0 h-[3px] bg-primary block w-full"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              style={{ transformOrigin: 'left' }}
-            />
-          </h2>
-        </motion.div>
-
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, i) => (
-            <ProjectCard key={i} project={project} index={i} />
-          ))}
+    <div className="project-browser">
+      {/* Browser chrome bar */}
+      <div className="project-browser-bar">
+        <div className="browser-dot red" />
+        <div className="browser-dot yellow" />
+        <div className="browser-dot green" />
+        <div className="browser-url">
+          {project.liveUrl
+            ? project.liveUrl.replace('https://', '').split('/')[0]
+            : `github.com/Athul-Titus/${project.title.replace(/\s+/g, '-').toLowerCase()}`}
         </div>
       </div>
+
+      {/* Project preview area */}
+      <div
+        className="project-preview"
+        style={{ background: `linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 40%, ${project.color}33 100%)` }}
+      >
+        {/* Decorative glow orb */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '200px', height: '200px',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${project.color}40 0%, transparent 70%)`,
+          filter: 'blur(30px)',
+        }} />
+        <div className="project-preview-inner">
+          <div
+            style={{
+              width: 56, height: 56, borderRadius: '14px',
+              background: project.color, margin: '0 auto 1rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.5rem', boxShadow: `0 8px 30px ${project.color}60`
+            }}
+          >
+            {project.tags[0]?.charAt(0) || '💡'}
+          </div>
+          <div className="project-preview-title">{project.title}</div>
+          <div className="project-preview-sub">{project.tags.slice(0, 2).join(' · ')}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Featured project card (full width alternating layout) */
+function FeaturedProject({ project, index }) {
+  const isReverse = index % 2 === 1;
+  return (
+    <div className={`project-item ${isReverse ? 'reverse' : ''} reveal`}>
+      {/* Browser mockup */}
+      <div className={isReverse ? 'reveal-right' : 'reveal-left'}>
+        <BrowserFrame project={project} />
+      </div>
+
+      {/* Info */}
+      <div className={`project-info ${isReverse ? 'reveal-left' : 'reveal-right'}`}>
+        <div className="project-number">#{String(index + 1).padStart(2, '0')}</div>
+        <h3 className="project-title">{project.title}</h3>
+        <p className="project-subtitle">{project.tags.slice(0, 3).join(' · ')}</p>
+        <p className="project-desc">{project.description}</p>
+
+        <div className="project-tags">
+          {project.tags.map(tag => (
+            <span key={tag} className="project-tag">{tag}</span>
+          ))}
+        </div>
+
+        <div className="project-links">
+          {project.liveUrl && (
+            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="btn-explore">
+              Explore Project
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          )}
+          <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn-github">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23A11.51 11.51 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .322.218.694.825.576C20.565 21.795 24 17.298 24 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            GitHub
+          </a>
+          {!project.liveUrl && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn-explore">
+              Explore Project
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Small card for non-featured projects */
+function OtherProjectCard({ project }) {
+  return (
+    <div className="other-project-card reveal">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: '8px', background: project.color,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '0.85rem', flexShrink: 0,
+        }}>
+          {project.tags[0]?.charAt(0)}
+        </div>
+        <h3 className="other-project-title">{project.title}</h3>
+      </div>
+      <p className="other-project-desc">{project.description}</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
+        {project.tags.slice(0, 3).map(t => (
+          <span key={t} style={{
+            fontSize: '0.72rem', padding: '0.2rem 0.65rem', borderRadius: '100px',
+            border: '1px solid rgba(0,0,0,0.1)', color: '#6b7280', background: 'white'
+          }}>{t}</span>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <a href={project.github} target="_blank" rel="noopener noreferrer"
+          style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23A11.51 11.51 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .322.218.694.825.576C20.565 21.795 24 17.298 24 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          View Code
+        </a>
+        {project.liveUrl && (
+          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: '0.8rem', fontWeight: 600, color: '#6b7280', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Live
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function Projects() {
+  useReveal();
+
+  const featured = projects.filter(p => p.featured);
+  const others = projects.filter(p => !p.featured);
+
+  return (
+    <section id="projects" className="projects-section light-section dot-grid">
+      {/* Header */}
+      <div className="projects-header">
+        <div className="reveal-left">
+          <span className="section-pill">SELECTED WORKS</span>
+          <h2 className="section-title">
+            Featured <span className="accent">Projects.</span>
+          </h2>
+        </div>
+        <p className="section-desc reveal-right" style={{ marginTop: '1.5rem' }}>
+          A showcase of my recent applications, highlighting performance, design,
+          and complex integrations across web, AI, and quantum domains.
+        </p>
+      </div>
+
+      {/* Featured projects (browser mockup alternating layout) */}
+      {featured.map((project, i) => (
+        <FeaturedProject key={project.title} project={project} index={i} />
+      ))}
+
+      {/* Other projects grid */}
+      {others.length > 0 && (
+        <>
+          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 2.5rem 2rem' }}>
+            <h3 className="reveal" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '1.5rem' }}>
+              More Projects
+            </h3>
+          </div>
+          <div className="other-projects-grid">
+            {others.map(p => (
+              <OtherProjectCard key={p.title} project={p} />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }

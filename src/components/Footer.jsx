@@ -1,13 +1,12 @@
 export default function Footer() {
   return (
-    <footer className="py-8 border-t border-primary/10">
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="text-text-secondary text-sm font-body">
-          Designed & Built by{' '}
-          <span className="text-text-primary hover:text-primary transition-colors duration-300 cursor-none">
-            Athul Titus
-          </span>{' '}
-          © 2025
+    <footer style={{ background: 'var(--dark)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="footer">
+        <p className="footer-copy">
+          Designed &amp; Built by <span style={{ color: 'rgba(255,255,255,0.6)' }}>Athul Titus</span> · © 2025
+        </p>
+        <p className="footer-avail">
+          Worldwide Available<br />2025
         </p>
       </div>
     </footer>
