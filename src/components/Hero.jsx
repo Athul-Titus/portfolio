@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { gsap } from '../hooks/useAnim';
+import { gsap } from 'gsap';
 
 /* 4-pointed star spark */
 function Spark({ size = 44, x, y, opacity = 0.22 }) {
@@ -8,7 +8,7 @@ function Spark({ size = 44, x, y, opacity = 0.22 }) {
       <svg width={size} height={size} viewBox="0 0 44 44" fill="none">
         <path
           d="M22 0C22 0 22 18 22 22C22 26 22 44 22 44C22 44 26 22 44 22C44 22 22 22 0 22C0 22 22 22 22 0Z"
-          fill={`rgba(0,0,0,${opacity})`}
+          fill={`rgba(255,255,255,${opacity})`}
         />
       </svg>
     </div>
@@ -25,19 +25,17 @@ export default function Hero() {
   const textRef = useRef(null);
   const photoRef = useRef(null);
 
-  /* Hero entrance — staggered text + photo slide-in */
+  /* Hero entrance animation */
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.2 });
-    // Text children stagger (eyebrow, h1, p, ctas)
     tl.fromTo(
       textRef.current?.children,
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power3.out' }
+      { y: 35, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.75, stagger: 0.12, ease: 'power3.out' }
     );
-    // Photo slide in from right
     tl.fromTo(
       photoRef.current,
-      { x: 50, opacity: 0 },
+      { x: 45, opacity: 0 },
       { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
       '-=0.5'
     );
@@ -46,10 +44,10 @@ export default function Hero() {
   return (
     <section id="hero" className="hero-section">
       {/* Sparks */}
-      <Spark size={52} x="7%" y="15%" opacity={0.2} />
-      <Spark size={28} x="4%" y="62%" opacity={0.18} />
-      <Spark size={36} x="91%" y="18%" opacity={0.2} />
-      <Spark size={20} x="88%" y="68%" opacity={0.16} />
+      <Spark size={50} x="6%" y="18%" opacity={0.25} />
+      <Spark size={28} x="5%" y="65%" opacity={0.2} />
+      <Spark size={40} x="92%" y="20%" opacity={0.25} />
+      <Spark size={24} x="88%" y="70%" opacity={0.18} />
 
       {/* Main grid */}
       <div className="hero-inner">
@@ -93,14 +91,6 @@ export default function Hero() {
             }}
           />
         </div>
-      </div>
-
-      {/* Wave break */}
-      <div className="hero-wave">
-        <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ height: 80 }}>
-          <path d="M0,40 C220,80 460,0 720,38 C980,76 1220,8 1440,40 L1440,80 L0,80 Z" fill="var(--primary)" />
-          <path d="M0,56 C260,14 560,74 860,46 C1100,24 1300,62 1440,52 L1440,80 L0,80 Z" fill="var(--light-bg)" />
-        </svg>
       </div>
     </section>
   );

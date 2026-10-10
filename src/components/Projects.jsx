@@ -196,8 +196,8 @@ export default function Projects() {
       {/* Other projects grid */}
       {others.length > 0 && (
         <>
-          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 2.5rem 2rem' }}>
-            <h3 className="reveal" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '1.5rem' }}>
+          <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto', padding: '0 var(--gutter) 2rem' }}>
+            <h3 className="reveal" style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-dark)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
               More Projects
             </h3>
           </div>
