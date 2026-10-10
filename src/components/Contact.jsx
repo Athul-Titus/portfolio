@@ -56,17 +56,31 @@ export default function Contact() {
     setLoading(true);
     try {
       await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'your_service_id',
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'your_template_id',
-        { name: form.name, email: form.email, message: form.message,
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_orhr02i',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_rs1iciw',
+        {
+          name: form.name,
+          email: form.email,
+          from_name: form.name,
+          from_email: form.email,
+          reply_to: form.email,
+          message: form.message,
+          to_name: 'Athul Titus',
           title: `Portfolio Contact from ${form.name}`,
-          time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'your_public_key'
+          time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'K4qyMDTMBvF59hoeH'
       );
       showToast('success', "Message sent! I'll get back to you soon.");
       setForm({ name: '', email: '', message: '' });
     } catch (err) {
-      showToast('error', `Failed: ${err.text || err.message || 'Unknown error'}`);
+      console.error('EmailJS Error:', err);
+      const errMsg = err?.text || err?.message || '';
+      if (errMsg.includes('Invalid grant') || errMsg.includes('reconnect your Gmail')) {
+        showToast('error', 'Gmail token expired in EmailJS. Reconnect Gmail in EmailJS dashboard.');
+      } else {
+        showToast('error', `Failed: ${errMsg || 'Error sending message'}`);
+      }
     } finally {
       setLoading(false);
     }
