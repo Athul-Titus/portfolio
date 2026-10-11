@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Tilt3D from './Tilt3D';
 
 function useReveal() {
   useEffect(() => {
@@ -53,21 +54,27 @@ export default function Skills() {
         </p>
       </div>
 
-      {/* Skill cards grid */}
+      {/* Skill cards grid with 3D Physics */}
       <div className="skills-grid">
         {skillGroups.map((group, i) => (
-          <div
+          <Tilt3D
             key={group.category}
-            className={`skill-card reveal reveal-delay-${i + 1}`}
+            maxTilt={7}
+            scale={1.02}
+            floatAngle={i % 2 === 0 ? -1 : 1}
+            glowColor="rgba(230, 57, 70, 0.18)"
+            className={`reveal reveal-delay-${i + 1}`}
           >
-            <h3 className="skill-card-title">{group.category}</h3>
-            <p className="skill-card-desc">{group.desc}</p>
-            <div className="skill-tags">
-              {group.skills.map(s => (
-                <span key={s} className="skill-tag">{s}</span>
-              ))}
+            <div className="skill-card">
+              <h3 className="skill-card-title">{group.category}</h3>
+              <p className="skill-card-desc">{group.desc}</p>
+              <div className="skill-tags">
+                {group.skills.map(s => (
+                  <span key={s} className="skill-tag">{s}</span>
+                ))}
+              </div>
             </div>
-          </div>
+          </Tilt3D>
         ))}
       </div>
     </section>

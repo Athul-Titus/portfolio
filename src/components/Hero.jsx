@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import Tilt3D from './Tilt3D';
 
 /* 4-pointed star spark */
 function Spark({ size = 44, x, y, opacity = 0.22 }) {
@@ -79,17 +80,21 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT: photo */}
-        <div className="hero-photo-wrap" ref={photoRef}>
-          <img
-            src={`${import.meta.env.BASE_URL}profile.jpg`}
-            alt="Athul Titus"
-            className="hero-photo"
-            onError={e => {
-              e.target.onerror = null;
-              e.target.src = `${import.meta.env.BASE_URL}profilepic.png`;
-            }}
-          />
+        {/* RIGHT: photo with 3D tilt & parallax */}
+        <div ref={photoRef} style={{ width: '100%', maxWidth: 440, margin: '0 auto' }}>
+          <Tilt3D maxTilt={8} scale={1.025} floatAngle={1.5} glowColor="rgba(255,255,255,0.25)">
+            <div className="hero-photo-wrap">
+              <img
+                src={`${import.meta.env.BASE_URL}profile.jpg`}
+                alt="Athul Titus"
+                className="hero-photo"
+                onError={e => {
+                  e.target.onerror = null;
+                  e.target.src = `${import.meta.env.BASE_URL}profilepic.png`;
+                }}
+              />
+            </div>
+          </Tilt3D>
         </div>
       </div>
     </section>

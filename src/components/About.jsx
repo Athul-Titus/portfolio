@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Tilt3D from './Tilt3D';
 
 function useReveal() {
   useEffect(() => {
@@ -51,20 +52,22 @@ export default function About() {
         <Spark4 size={28} style={{ bottom: '25%', right: '4%' }} opacity={0.2} />
 
         <div className="about-inner">
-          {/* LEFT: Photo in clipboard frame */}
+          {/* LEFT: Photo in clipboard frame with 3D physics */}
           <div className="about-photo-wrap reveal-left">
-            <div className="about-photo-frame">
-              <div className="about-photo-clip" />
-              <img
-                src={`${import.meta.env.BASE_URL}profilepic.png`}
-                alt="Athul Titus"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
-                onError={e => {
-                  e.target.onerror = null;
-                  e.target.src = `${import.meta.env.BASE_URL}profile.jpg`;
-                }}
-              />
-            </div>
+            <Tilt3D maxTilt={9} scale={1.03} floatAngle={-2} glowColor="rgba(255,255,255,0.22)">
+              <div className="about-photo-frame">
+                <div className="about-photo-clip" />
+                <img
+                  src={`${import.meta.env.BASE_URL}profilepic.png`}
+                  alt="Athul Titus"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = `${import.meta.env.BASE_URL}profile.jpg`;
+                  }}
+                />
+              </div>
+            </Tilt3D>
           </div>
 
           {/* RIGHT: Bio + Tech */}
